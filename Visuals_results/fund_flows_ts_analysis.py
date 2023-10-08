@@ -1,21 +1,43 @@
 from bokeh.plotting import figure, show
-from bokeh.models import ColumnDataSource, Slider, CustomJS, DateSlider
+from bokeh.models import ColumnDataSource, Slider, CustomJS, DateSlider,DateRangeSlider
 from bokeh.layouts import column
 from bokeh.io import output_notebook
 from bokeh.sampledata.stocks import AAPL
 import pandas as pd
+from datetime import date, datetime
 
 # Create a pandas DataFrame from the Bokeh sample data (AAPL stock prices)
 df = pd.DataFrame(AAPL)
 
-# Convert the 'date' column to datetime format
+# Convert the date column to the yyyy-mm-dd hh:mm:ss format
+# df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d').dt.strftime('%Y-%m-%d %H:%M:%S')
+df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+print(df.head())
+print(type(df['date'][0]))
+print(type(df['date'][100]))
+
+df.date = pd.to_datetime(df.date)
+print(type(df['date'][100]))
+print(len(df.date))
+for i in range(len(df.date)):
+    df['date'][i] = df['date'][i].date()
+    # df['date'][i] = datetime.combine(df['date'][i], datetime.min.time())
+
+print(df['date'][0])
 print(type(df['date'][0]))
 
-# Parse the date string into a datetime object
-# date_object = datetime.strptime(date_string, date_format)
-df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
 
+# for i in range(len(df['date'])):
+#     df['date'][i] = df['date'][i].to_pydatetime()
+#     print(str(df['date'][i]).split()[0])
+
+# Convert the 'date' column to datetime format
 # df['date'] = pd.to_datetime(df['date'])
+# df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+# print(df['date'])
+# df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%m:%s')
+# df['date'] = df['date'].strftime('%Y-%m-%d %H:%M:%S')
+
 
 # Create a Bokeh ColumnDataSource from the DataFrame
 source = ColumnDataSource(df)
@@ -27,12 +49,14 @@ p = figure(title="AAPL Stock Prices", x_axis_label="Date", y_axis_label="Price",
 # Plot the line chart
 p.line(x='date', y='close', source=source, line_width=2, legend_label="Close Price")
 
-# Create a DateSlider widget
-date_slider = DateSlider(title="Date Range", start=df['date'].min(), end=df['date'].max(),
-                         value=(df['date'].min(), df['date'].max()), step=1, format="%b %Y")
 
-# Convert Timestamps to datetime objects for the initial value
-date_slider.value = tuple(pd.to_datetime(date_slider.value))
+print(df['date'].min())
+min = df['date'].min()
+print(df['date'].max())
+max = df['date'].max()
+# Create a DateSlider widget
+date_slider = DateRangeSlider(title="Date Range", start=min, end=max,
+                         value=(min, max))
 
 # Define a CustomJS callback to update the data source based on the date range selected in the slider
 callback = CustomJS(args=dict(source=source, date_slider=date_slider), code="""
@@ -65,5 +89,5 @@ date_slider.js_on_change('value', callback)
 layout = column(p, date_slider)
 
 # Show the plot in the Jupyter Notebook
-output_notebook()
+# output_notebook()
 show(layout)
