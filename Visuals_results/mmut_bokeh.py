@@ -86,3 +86,46 @@ layout = layout(
 
 # show result
 show(layout)
+
+from bokeh.plotting import figure, show
+
+from bokeh.resources import CDN
+
+from bokeh.embed import file_html
+
+from bokeh.palettes import Spectral4
+
+from bokeh.models import ColumnDataSource
+
+# prepare some data
+
+x = [1, 2, 3, 4, 5]
+
+y = [6, 7, 2, 4, 5]
+
+# create a new plot with a title and axis labels
+
+p = figure(title="Simple line example", x_axis_label="x", y_axis_label="y")
+
+# add a line renderer with legend and line thickness
+
+p.line(x, y, legend_label="Temp.", line_width=2)
+
+# show(p)
+
+
+# %%
+
+# bok_html_file = reportingdir + "static/test/bok.html"
+
+test_dir = "/mnt/c/python/risk/"
+
+bok_html = file_html(p, CDN, "my plot")
+
+# bok_html_file = outputdir + "bokeh1.html"
+
+bok_html_file = test_dir + "bokeh1.html"
+
+with open(bok_html_file, "w") as f:
+    f.write(bok_html)
+
