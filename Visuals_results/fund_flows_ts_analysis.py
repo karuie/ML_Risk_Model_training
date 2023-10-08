@@ -43,7 +43,7 @@ print(type(df['date'][0]))
 source = ColumnDataSource(df)
 
 # Create a Bokeh figure
-p = figure(title="AAPL Stock Prices", x_axis_label="Date", y_axis_label="Price",
+p = figure(title="AAPL Stock Prices TS analysis", x_axis_label="Date", y_axis_label="Price",
            x_axis_type="datetime", width=800, height=400)
 
 # Plot the line chart
